@@ -1,11 +1,11 @@
 import pygame, sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, RESPAWN_COOLDOWN_SECONDS
 from logger import log_state, log_event
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
-from lives import Life
+from lives import LifeIcon
 
 def main():
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
@@ -25,16 +25,16 @@ def main():
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
-    Life.containers = (lives, drawable)
+    LifeIcon.containers = (lives, drawable)
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     #asteroid = Asteroid(100, 100, 20)
     asteroidfield = AsteroidField()
 
     for i in range(1, 4):
-            life = Life(SCREEN_WIDTH - i * 40, SCREEN_HEIGHT - 50)
+            life = LifeIcon(SCREEN_WIDTH - i * 40, SCREEN_HEIGHT - 50)
 
     while True:
         log_state()
@@ -43,23 +43,24 @@ def main():
             if event.type == pygame.QUIT:
                 return
 
-        pygame.Surface.fill(screen, (0, 0, 0))
+        screen.fill((0, 0, 0))
 
         updatable.update(dt)
 
-        for asteroid in asteroids:
-            
-            if asteroid.collides_with(player):
-                log_event("player_hit")
+        if player.respawn_cooldown < 0:
 
-                if len(lives.sprites()) == 0:
-                        print("Game Over!")
-                        sys.exit()
-                else:
-                    for life in lives:
-                        life.kill()
-                        player.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                        break 
+            for asteroid in asteroids:        
+                if asteroid.collides_with(player):
+                    log_event("player_hit")
+
+                    if len(lives.sprites()) == 0:
+                            print("Game Over!")
+                            sys.exit()
+                    else:
+                        for life in lives:
+                            life.kill()
+                            player.respawn()
+                            break
 
         for asteroid in asteroids:
             for shot in shots:
