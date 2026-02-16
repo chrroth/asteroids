@@ -1,5 +1,5 @@
 import pygame, sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, RESPAWN_COOLDOWN_SECONDS
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, LIFE_SPACING, LIFE_Y_OFFSET
 from logger import log_state, log_event
 from player import Player
 from asteroid import Asteroid
@@ -22,7 +22,6 @@ def main():
     shots = pygame.sprite.Group()
     lives = pygame.sprite.Group()
 
-
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
@@ -30,11 +29,10 @@ def main():
     LifeIcon.containers = (lives, drawable)
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-    #asteroid = Asteroid(100, 100, 20)
-    asteroidfield = AsteroidField()
+    AsteroidField()
 
     for i in range(1, 4):
-            life = LifeIcon(SCREEN_WIDTH - i * 40, SCREEN_HEIGHT - 50)
+        LifeIcon(SCREEN_WIDTH - i * LIFE_SPACING, SCREEN_HEIGHT - LIFE_Y_OFFSET)
 
     while True:
         log_state()
@@ -47,20 +45,17 @@ def main():
 
         updatable.update(dt)
 
-        if player.respawn_cooldown < 0:
+        if player.respawn_cooldown <= 0:
 
             for asteroid in asteroids:        
                 if asteroid.collides_with(player):
                     log_event("player_hit")
+                    if not lives:
+                        print("Game Over!")
+                        return
 
-                    if len(lives.sprites()) == 0:
-                            print("Game Over!")
-                            sys.exit()
-                    else:
-                        for life in lives:
-                            life.kill()
-                            player.respawn()
-                            break
+                    lives.sprites()[-1].kill()
+                    player.respawn()          
 
         for asteroid in asteroids:
             for shot in shots:
@@ -69,14 +64,12 @@ def main():
                     asteroid.split()
                     shot.kill()
 
-
         for object in drawable:
             object.draw(screen)
 
         pygame.display.flip()
 
         dt = clock.tick(60) / 1000
-
     
 if __name__ == "__main__":
     main()
