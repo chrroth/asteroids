@@ -22,14 +22,12 @@ def main():
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     lives = pygame.sprite.Group()
-    scores = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
     LifeIcon.containers = (lives, drawable)
-    Score.containers = (scores)
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     score = Score(SCREEN_WIDTH - 70, SCREEN_HEIGHT - 80)

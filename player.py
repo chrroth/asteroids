@@ -63,7 +63,7 @@ class Player(CircleShape):
         self.shoot_cooldown = 0
         self.respawn_cooldown = RESPAWN_COOLDOWN_SECONDS
 
-    def update_score(self):
-        self.score += 1
+    def update_score(self, points=1):
+        self.score += points
 
 
