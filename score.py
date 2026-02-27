@@ -1,5 +1,4 @@
 import pygame
-from player import Player
 
 class Score:
     def __init__(self, x, y):
