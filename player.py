@@ -10,6 +10,7 @@ class Player(CircleShape):
         self.rotation = 0
         self.shoot_cooldown = 0
         self.respawn_cooldown = 0
+        self.score = 0
     
     def draw(self, screen):
         vertices = get_triangle_vertices(self.position, self.rotation, self.radius)
@@ -61,5 +62,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.shoot_cooldown = 0
         self.respawn_cooldown = RESPAWN_COOLDOWN_SECONDS
+
+    def update_score(self):
+        self.score += 1
 
 

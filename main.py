@@ -6,6 +6,7 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from lives import LifeIcon
+from score import Score
 
 def main():
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
@@ -21,14 +22,17 @@ def main():
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     lives = pygame.sprite.Group()
+    scores = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
     LifeIcon.containers = (lives, drawable)
+    Score.containers = (scores)
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    score = Score(SCREEN_WIDTH - 70, SCREEN_HEIGHT - 80)
     AsteroidField()
 
     for i in range(1, 4):
@@ -63,9 +67,12 @@ def main():
                     log_event("asteroid_shot")
                     asteroid.split()
                     shot.kill()
+                    player.update_score()
 
         for object in drawable:
             object.draw(screen)
+
+        score.draw(screen, player)
 
         pygame.display.flip()
 
